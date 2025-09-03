@@ -25,7 +25,7 @@ SAMPLES = [os.path.basename(r1).replace("_1.fastq","") for r1,r2 in FASTQ_PAIRS]
 rule all:
     input:
         expand(os.path.join(DATA_DIR, "{genome}.ID.fasta"), genome=GENOMES),
-        expand(os.path.join(DATA_DIR, "{genome}_{sample}"), genome=GENOMES, sample=SAMPLES)
+        expand(os.path.join(DATA_DIR, "out_{genome}_{sample}.ratio.txt"), genome=GENOMES, sample=SAMPLES)
 # Locate inverted repeats
 rule locate:
     input:
@@ -45,6 +45,7 @@ rule create:
         tab = os.path.join(DATA_DIR, "{genome}.tab")
     output:
         fasta = os.path.join(DATA_DIR, "{genome}.ID.fasta")
+    threads: 1
     shell:
         """
         python PhaseFinder.py create -f {input.genome} -t {input.tab} -s 1000 -i {output.fasta}
@@ -57,10 +58,11 @@ rule ratio:
         r1 = lambda wc: os.path.join(FASTQ_DIR, f"{wc.sample}_1.fastq"),
         r2 = lambda wc: os.path.join(FASTQ_DIR, f"{wc.sample}_2.fastq")
     output:
-        directory(os.path.join(DATA_DIR, "{genome}_{sample}"))
+        #directory(os.path.join(DATA_DIR, "{genome}_{sample}"))
+        ratio_file = os.path.join(DATA_DIR,"out_{genome}_{sample}.ratio.txt")
     threads: 16
     shell:
         """
-        python PhaseFinder.py ratio -i {input.fasta} -1 {input.r1} -2 {input.r2} -p {threads} -o {output}/out
+        python PhaseFinder.py ratio -i {input.fasta} -1 {input.r1} -2 {input.r2} -p {threads} -o {DATA_DIR}/out_{wildcards.genome}_{wildcards.sample}
         """
 
