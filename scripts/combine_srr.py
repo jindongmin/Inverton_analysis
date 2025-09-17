@@ -42,6 +42,9 @@ for file in all_files:
 # Concatenate all dataframes
 combined_df = pd.concat(df_list, ignore_index=True)
 
+# Sort by 'ID' column
+combined_df = combined_df.sort_values(by="ID").reset_index(drop=True)
+
 # Save to CSV
 output_file = os.path.join(input_folder, "combined_with_SRR.csv")
 combined_df.to_csv(output_file, index=False)
