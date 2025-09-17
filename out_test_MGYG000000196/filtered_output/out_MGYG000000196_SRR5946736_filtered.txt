@@ -1,0 +1,2 @@
+ID	Pe_F	Pe_R	Pe_ratio	Span_F	Span_R	Span_ratio
+MGYG000000196_36:0-21-593-614	0	6	1.0	0	6	1.0
