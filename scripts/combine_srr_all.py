@@ -29,14 +29,16 @@ df_list = []
 for file in all_files:
     # Read the file
     df = pd.read_csv(file, sep="\t")
-    
+    filename=os.path.basename(file)
     # Extract SRR_ID from filename using regex
-    match = re.search(r'SRR[0-9]+', os.path.basename(file))
+    match = re.search(r'SRR[0-9]+', filename)
     if match:
         df['SRR_ID'] = match.group(0)
     else:
         df['SRR_ID'] = "UNKNOWN"
-    
+    # Extract MAG_ID from filename (between out_ and _SRR)
+    mag_match = re.search(r'out_(.*?)_SRR', filename)
+    df['MAG_ID'] = mag_match.group(1) if mag_match else "UNKNOWN"    
     df_list.append(df)
 
 # Concatenate all dataframes
